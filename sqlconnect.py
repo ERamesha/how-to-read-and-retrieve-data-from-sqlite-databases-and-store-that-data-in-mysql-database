@@ -7,18 +7,19 @@ import mysql.connector
 from PIL import Image
 from io import BytesIO
 import os
+import shutil
 path = r'C:\Users\ramesha\ZI\databases'
+
 # Create a SQL connection to our SQLite database
 try:
     
     for f in os.walk(path):
-        print("================",f[2])
+        #print("================",f[2])
         for f1 in f[2]:
             if  f1.endswith('.db'):
                 print('=========',os.path.join(f[0],f1))
                 sqliteConnection = sqlite3.connect(os.path.join(f[0],f1))
                 # program logic goes here
-                #sqliteConnection.close()
                 cursor = sqliteConnection.cursor()
                 cursor1 = sqliteConnection.cursor()
                 print("Database Successfully Connected to SQLite")
@@ -59,7 +60,7 @@ try:
                 finally:
                     if connection.is_connected():
                         cursor.close()
-                        #print("MySQL connection is closed")
+                        print("MySQL connection is closed")
                 for record1 in record:        
                     mySql_insert_query = """INSERT INTO table1 (Rollno,Appno,Name,FatherName,DOB,VerifiedTime,VerifiedStatus,tokenno,operator_name,operator_id,locationid,device_id)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
                     val=(record1)
@@ -97,7 +98,10 @@ try:
                 else:
                     print('image data saved in folders')
             else:
-                print('databases not connected')    
+                source=os.path.join(f[0],f1)
+                destination=r'C:\Users\ramesha\ZI\databases1'
+                shutil.move(source, destination)
+                print('database not connected')    
 except sqlite3.Error as error:
     print(" ", error)
 finally:
