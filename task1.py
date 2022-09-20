@@ -8,6 +8,7 @@ from PIL import Image
 from io import BytesIO
 import os
 import shutil
+
 path = r'C:\Users\ramesha\ZI\databases'
 for f in os.walk(path):
         #print("================",f[2])

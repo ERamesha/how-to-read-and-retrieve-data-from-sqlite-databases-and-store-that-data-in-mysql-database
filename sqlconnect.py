@@ -8,11 +8,13 @@ from PIL import Image
 from io import BytesIO
 import os
 import shutil
-path = r'C:\Users\ramesha\ZI\databases'
+
+path = r'C:/Users/ramesha/ZI/databases'
+path1 = r'C:/Users/ramesha/ZI'
 for f in os.walk(path):
         #print("================",f[2])
         for f1 in f[2]:
-            if  f1.endswith('.db'):
+            if  f1.startswith('ttipl_bio_reg_db'):
                 #print('=========',os.path.join(f[0],f1))
                 sqliteConnection = sqlite3.connect(os.path.join(f[0],f1))
                 #print("==================",sqliteConnection)
@@ -50,7 +52,7 @@ for f in os.walk(path):
                         cursor = connection.cursor()
                         result = cursor.execute(mySql_Create_Table_Query)
                         print("table1 Table created successfully ")
-                
+
                     except mysql.connector.Error as error:
                         print("Failed to create table in MySQL: {}".format(error))
                     finally:
@@ -84,33 +86,53 @@ for f in os.walk(path):
                         rgb_iml = iml.convert('RGB')
                         imr = Image.open(BytesIO(fpr))
                         rgb_imr = imr.convert('RGB')
-                        filepath='C:/Users/ramesha/ZI/image/'
-                        filepath1='C:/Users/ramesha/ZI/fplti/'
-                        filepath2='C:/Users/ramesha/ZI/fprti/'
+                        
+                        if not os.path.exists(os.path.join(path1,'images')):
+                            os.makedirs(os.path.join(path1,'images'))
+                        filepath=os.path.join(path1,'images')
+                        if not os.path.exists(os.path.join(path1,'fpdata')):
+                            os.makedirs(os.path.join(path1,'fpdata'))
+                        filepath1=os.path.join(path1,'fpdata')
+                        #filepath2='C:/Users/ramesha/ZI/fprti/'
                         rgb_imp.save(filepath+'/'+str(Rollno)+'.jpg')
-                        rgb_iml.save(filepath1+'/'+str(Rollno)+'.jpg')
-                        rgb_imr.save(filepath2+'/'+str(Rollno)+'.jpg')
+                        rgb_iml.save(filepath1+'/'+str(Rollno)+'_lti1.jpg')
+                        rgb_imr.save(filepath1+'/'+str(Rollno)+'_rti1.jpg')
                         cursor.close()
                     else:
                         print('Images Saved In Folders')
                 except sqlite3.Error as error:
-                    print(" ", error)
-                    source=os.path.join(f[0],f1)
-                    destination=r'C:\Users\ramesha\ZI\error-databases'
-                    sqliteConnection.close()
-                    shutil.move(source, destination)
-                finally:
-                    if sqliteConnection:
                         sqliteConnection.close()
+                        print(" ", error)
+                        if not os.path.exists(os.path.join(path1,'error-databases')):
+                            os.makedirs(os.path.join(path1,'error-databases'))
+                        source=os.path.join(f[0],f1)
+                        destination=os.path.join(path1,'error-databases')
+                        shutil.move(source, destination)
+                finally:
                         print("The SQLite connection is closed")
-                #mysql connection query
                 
             else:
+                
+                if not os.path.exists(os.path.join(path1,'non_db_files')):
+                  os.makedirs(os.path.join(path1,'non_db_files'))
                 source=os.path.join(f[0],f1)
-                destination=r'C:\Users\ramesha\ZI\non_db_files'
+                destination=os.path.join(path1,'non_db_files')
                 shutil.move(source, destination)
                 print('Database Not Connected')
         else:
             print('No Database To Connect In Folder')
 else:
+    if not os.path.exists(os.path.join(path1,'completed_db_files')):
+        os.makedirs(os.path.join(path1,'completed_db_files'))
+    source = os.path.join(path1,'databases')
+    destination = os.path.join(path1,'completed_db_files')
+ 
+    # gather all files
+    allfiles = os.listdir(source)
     print('Task Is Completed')
+    # iterate on all files to move them to destination folder
+    for f in allfiles:
+        src_path = os.path.join(source, f)
+        dst_path = os.path.join(destination, f)
+        os.rename(src_path, dst_path)
+        
