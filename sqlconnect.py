@@ -1,3 +1,4 @@
+
 from pickle import TRUE
 import sqlite3
 from unittest import skip
@@ -9,8 +10,10 @@ from io import BytesIO
 import os
 import shutil
 
+
 path = r'C:/Users/ramesha/ZI/databases'
 path1 = r'C:/Users/ramesha/ZI'
+old_name = r"filepath+'/'+str(Rollno)+'.jpg'"
 for f in os.walk(path):
         #print("================",f[2])
         for f1 in f[2]:
@@ -46,8 +49,8 @@ for f in os.walk(path):
                                                 operator_name TEXT,
                                                 operator_id TEXT,
                                                 locationid TEXT,
-                                                device_id TEXT,
-                                                PRIMARY KEY (Rollno)) """
+                                                device_id TEXT
+                                                ) """
                         
                         cursor = connection.cursor()
                         result = cursor.execute(mySql_Create_Table_Query)
@@ -89,12 +92,27 @@ for f in os.walk(path):
                         
                         if not os.path.exists(os.path.join(path1,'images')):
                             os.makedirs(os.path.join(path1,'images'))
+                            
                         filepath=os.path.join(path1,'images')
                         if not os.path.exists(os.path.join(path1,'fpdata')):
                             os.makedirs(os.path.join(path1,'fpdata'))
                         filepath1=os.path.join(path1,'fpdata')
-                        #filepath2='C:/Users/ramesha/ZI/fprti/'
-                        rgb_imp.save(filepath+'/'+str(Rollno)+'.jpg')
+                        
+                        if os.path.exists(filepath+'/'+str(Rollno)+'.jpg'):
+                            
+                            ii = 1
+                            while True:
+                                new_name = os.path.join(filepath+'/'+str(Rollno) + "_" + str(ii) + '.jpg')
+                                print('00000---',new_name)
+                                if not os.path.exists(new_name):
+                                    rgb_imp.save(new_name)
+                                    print("Copied", old_name, "as", new_name)
+                                    
+                                    break
+                                ii += 1
+                        else:
+                            rgb_imp.save(filepath+'/'+str(Rollno)+'.jpg')
+                            
                         rgb_iml.save(filepath1+'/'+str(Rollno)+'_lti1.jpg')
                         rgb_imr.save(filepath1+'/'+str(Rollno)+'_rti1.jpg')
                         cursor.close()
@@ -132,7 +150,9 @@ else:
     print('Task Is Completed')
     # iterate on all files to move them to destination folder
     for f in allfiles:
+        sqliteConnection.close()
         src_path = os.path.join(source, f)
         dst_path = os.path.join(destination, f)
-        os.rename(src_path, dst_path)
+        shutil.move(src_path, dst_path)
         
+
