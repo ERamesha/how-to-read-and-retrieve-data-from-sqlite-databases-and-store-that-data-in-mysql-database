@@ -19,19 +19,19 @@ cursor.execute(query)
   
 data = cursor.fetchall()
 #print(data)
-rollno = '332233936'
+#rollno = '332233936'
 for i in data:
     #print(i)
      #print('name===========',i[0])
     #print('image===========',i[1])
-    #Rollno=i[0]
+    Rollno=i[0]
     image=i[1]
     #print(image)
     #print(image)
     # Decode the string
     im = Image.open(BytesIO(b64decode(image.split(',')[1])))
     filepath='D:/images/'
-    im.save(filepath+'/'+str(rollno)+'.jpg')
+    im.save(filepath+'/'+str(Rollno)+'.jpg')
 
   
 # Display the image 
